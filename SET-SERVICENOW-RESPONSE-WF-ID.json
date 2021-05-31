@@ -1,0 +1,432 @@
+{
+  "workflow": {
+    "unique_name": "definition_workflow_01LFV77VQ5C216POGZEm4FVkiL3OQlmgB1j",
+    "name": "SET-SERVICENOW-RESPONSE-WF-ID",
+    "title": "SET-SERVICENOW-RESPONSE-WF-ID",
+    "type": "generic.workflow",
+    "base_type": "workflow",
+    "variables": [
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "SERVICENOW-TO-AMP",
+          "scope": "local",
+          "name": "Action to Find",
+          "type": "datatype.string",
+          "description": "If you're looking for a specific action, enter its name here. For orchestration workflows, this would be the workflow's exact name. If a matching action is found, the workflow will return its information",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01LFV77VFM0Y7065RT241OGoSsDGi4xH1Dn",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "ip",
+          "scope": "local",
+          "name": "Observable Type",
+          "type": "datatype.string",
+          "description": "The type of observable to get actions for. Examples of valid observable types include: domain, ip, hostname, url, and sha256",
+          "is_required": true,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01LFV77VFLUH47FMatAnpNJ9SZNY5dhKOVI",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "192.168.1.1",
+          "scope": "local",
+          "name": "Observable Value",
+          "type": "datatype.string",
+          "description": "The actual observable to fetch actions for",
+          "is_required": true,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01LFV77VFLZ6L722AvI8UDDhFcXE6SJcUmj",
+        "object_type": "variable_workflow"
+      }
+    ],
+    "properties": {
+      "atomic": {
+        "is_atomic": false
+      },
+      "delete_workflow_instance": false,
+      "description": "ONLY RUN ONCE\n\nThis workflow shows how to get a list of available response actions from Cisco Threat Response for a given observable. The actions returned may vary depending on the type of observable provided. SecureX orchestration workflows will be returned for any observable type and it's up to the workflow to decide which observables to accept and process.\n\nTargets: CTR_For_Access_Token, CTR_API\n\nSteps:\n[] Get an access token for CTR\n[] Get the available response actions from CTR\n[] Print a human-readable list of modules and actions using Python (see this activity's output for a list of all actions)\n[] Check if an action to find was provided. If so:\n[]> Convert the actions to a table\n[]> Loop through each action looking for the one we want\n[]> If a matching action is found, end the workflow and return its information\n\nMore information about response workflows and actions can be found in our GitHub documentation at https://cs.co/SXO_docs\n\nRun this workflow and inspect each activity's output carefully.",
+      "display_name": "SET-SERVICENOW-RESPONSE-WF-ID",
+      "runtime_user": {
+        "override_target_runtime_user": false,
+        "specify_on_workflow_start": false,
+        "target_default": true
+      },
+      "target": {
+        "no_target": true
+      }
+    },
+    "object_type": "definition_workflow",
+    "actions": [
+      {
+        "unique_name": "definition_activity_01LFV799L296M3JyvqjPkfdGrNnq0grlmjM",
+        "name": "Group",
+        "title": "Get response actions",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Get response actions",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01LYSY74GNLQQ6Trlej3eVh7kFHLrSBQEBI",
+            "name": "Threat Response v2 - Generate Access Token",
+            "title": "Threat Response v2 - Generate Access Token",
+            "type": "workflow.atomic_workflow",
+            "base_type": "subworkflow",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Threat Response v2 - Generate Access Token",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01LYH2TNGIVL145yjq4b5IyRe7nsMVf273d",
+                "target_type": "web-service.endpoint"
+              },
+              "workflow_id": "definition_workflow_01KWJ2ISZTF2V6ibRYe7FZ7sOuycDOpnwss"
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01LYSYNXP7MKU1MkQ91kWqA8BXqTdbtPkEr",
+            "name": "Threat Response v2 - List Response Actions",
+            "title": "Threat Response v2 - List Response Actions",
+            "type": "workflow.atomic_workflow",
+            "base_type": "subworkflow",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Threat Response v2 - List Response Actions",
+              "input": {
+                "variable_workflow_01LN1L19G5QMY2si62lBJsZOMzQiYNcFavH": "$workflow.definition_workflow_01LFV77VQ5C216POGZEm4FVkiL3OQlmgB1j.local.variable_workflow_01LFV77VFLZ6L722AvI8UDDhFcXE6SJcUmj$",
+                "variable_workflow_01LN1L19G5XT05gbSZsyqyvxyRmPMFnqpby": "$activity.definition_activity_01LYSY74GNLQQ6Trlej3eVh7kFHLrSBQEBI.output.variable_workflow_01KWJ2ISHZ9753Hoi7x9S5EPpucAbm53HHF$",
+                "variable_workflow_01LN1L19G62JF0LmmycxXMXAJRAwme5cfSX": "$workflow.definition_workflow_01LFV77VQ5C216POGZEm4FVkiL3OQlmgB1j.local.variable_workflow_01LFV77VFLUH47FMatAnpNJ9SZNY5dhKOVI$"
+              },
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01IHHL6CSE7M76lUSYu0kSHwLlVTw8u63Pw",
+                "target_type": "web-service.endpoint"
+              },
+              "workflow_id": "definition_workflow_01LN1L19T0TV005DmQQel75kxFub6INhKKO"
+            },
+            "object_type": "definition_activity"
+          }
+        ]
+      },
+      {
+        "unique_name": "definition_activity_01LFV7BD1TDWQ6tQ5QFGofT81hyR2IKW7vf",
+        "name": "Execute Python Script",
+        "title": "Convert module list into readable text",
+        "type": "python3.script",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "continue_on_failure": false,
+          "description": "Look at this output's activity for a human readable list of modules and actions",
+          "display_name": "Convert module list into readable text",
+          "script": "import sys,json\n\n# Look at this output's activity for a human readable list of modules and actions\n\nctrJson = json.loads(sys.argv[1])\n\nfor module in ctrJson['data']:\n  print('------------------------------------------------------------------------------------------------------------------\\nModule Name: ' + module['module'] + '\\nInstance ID: ' + module['module_instance_id'] + '\\nAction ID: ' + module['id'] + '\\nAction Title: ' + module['title'] + '\\nAction URL: /iroh-response' + module['url'] + '\\n------------------------------------------------------------------------------------------------------------------')\n",
+          "script_arguments": [
+            "$activity.definition_activity_01LYSYNXP7MKU1MkQ91kWqA8BXqTdbtPkEr.output.variable_workflow_01LN1L19G61AZ0FyrfzhxbvHZKX33SMiztz$"
+          ],
+          "skip_execution": true
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01LFV7BTOE8VK5meUsU3Q8LA8Hg7kfr2AKN",
+        "name": "Group",
+        "title": "Find the action provided as input",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Find the action provided as input",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01LFV7CA5DXML0rVQLYSaczLO1ScdkamzdM",
+            "name": "Condition Block",
+            "title": "Was an action to look for provided?",
+            "type": "logic.if_else",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Was an action to look for provided?",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "blocks": [
+              {
+                "unique_name": "definition_activity_01LFV7CPYSP1F1fCNPQW1vaRPpui7NOKsRO",
+                "name": "Condition Branch",
+                "title": "Yes",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$workflow.definition_workflow_01LFV77VQ5C216POGZEm4FVkiL3OQlmgB1j.local.variable_workflow_01LFV77VFM0Y7065RT241OGoSsDGi4xH1Dn$",
+                    "operator": "ne",
+                    "right_operand": ""
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Yes",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01LFV7CUJT0YD1b71YTtZ3gvBzlrnvkWKBL",
+                    "name": "Read Table from JSON",
+                    "title": "Convert actions to table",
+                    "type": "corejava.read_table_from_json",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "continue_on_failure": false,
+                      "display_name": "Convert actions to table",
+                      "input_json": "$activity.definition_activity_01LYSYNXP7MKU1MkQ91kWqA8BXqTdbtPkEr.output.variable_workflow_01LN1L19G61AZ0FyrfzhxbvHZKX33SMiztz$",
+                      "jsonpath_query": "$.",
+                      "persist_output": false,
+                      "populate_columns": false,
+                      "skip_execution": false,
+                      "table_columns": [
+                        {
+                          "column_name": "module",
+                          "column_type": "string"
+                        },
+                        {
+                          "column_name": "module_instance_id",
+                          "column_type": "string"
+                        },
+                        {
+                          "column_name": "id",
+                          "column_type": "string"
+                        },
+                        {
+                          "column_name": "title",
+                          "column_type": "string"
+                        },
+                        {
+                          "column_name": "url",
+                          "column_type": "string"
+                        }
+                      ]
+                    },
+                    "object_type": "definition_activity"
+                  },
+                  {
+                    "unique_name": "definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9",
+                    "name": "For Each",
+                    "title": "For each response action",
+                    "type": "logic.for_each",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "For each response action",
+                      "skip_execution": false,
+                      "source_array": "$activity.definition_activity_01LFV7CUJT0YD1b71YTtZ3gvBzlrnvkWKBL.output.read_table_from_json$"
+                    },
+                    "object_type": "definition_activity",
+                    "actions": [
+                      {
+                        "unique_name": "definition_activity_01LFV7DTPAFU76ngAVDJFZAffXTtVHcWzoC",
+                        "name": "Condition Block",
+                        "title": "Is this the action we're looking for?",
+                        "type": "logic.if_else",
+                        "base_type": "activity",
+                        "properties": {
+                          "continue_on_failure": false,
+                          "display_name": "Is this the action we're looking for?",
+                          "skip_execution": false
+                        },
+                        "object_type": "definition_activity",
+                        "blocks": [
+                          {
+                            "unique_name": "definition_activity_01LFV7E92VX3F1d56lnwOy1njnJP44vakdO",
+                            "name": "Condition Branch",
+                            "title": "Yes",
+                            "type": "logic.condition_block",
+                            "base_type": "activity",
+                            "properties": {
+                              "condition": {
+                                "left_operand": "$activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].title$",
+                                "operator": "eq",
+                                "right_operand": "$workflow.definition_workflow_01LFV77VQ5C216POGZEm4FVkiL3OQlmgB1j.local.variable_workflow_01LFV77VFM0Y7065RT241OGoSsDGi4xH1Dn$"
+                              },
+                              "continue_on_failure": false,
+                              "display_name": "Yes",
+                              "skip_execution": false
+                            },
+                            "object_type": "definition_activity",
+                            "actions": [
+                              {
+                                "unique_name": "definition_activity_01LFZ93JA02BH4vHI9g4yGnYdd5YJ0B4SIv",
+                                "name": "Set Variables",
+                                "title": "Set global var: \"SNOW-RESPONSE-WF-ID\"",
+                                "type": "core.set_multiple_variables",
+                                "base_type": "activity",
+                                "properties": {
+                                  "continue_on_failure": false,
+                                  "display_name": "Set global var: \"SNOW-RESPONSE-WF-ID\"",
+                                  "skip_execution": false,
+                                  "variables_to_update": [
+                                    {
+                                      "variable_to_update": "$global.variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up.global.variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up$",
+                                      "variable_value_new": "$activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].module_instance_id$/$activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].id$"
+                                    }
+                                  ]
+                                },
+                                "object_type": "definition_activity"
+                              },
+                              {
+                                "unique_name": "definition_activity_01LFV7ED3OVZX5vUl6myVdAdGquMzMwTEET",
+                                "name": "Completed",
+                                "title": "Action found",
+                                "type": "logic.completed",
+                                "base_type": "activity",
+                                "properties": {
+                                  "completion_type": "succeeded",
+                                  "continue_on_failure": false,
+                                  "display_name": "Action found",
+                                  "result_message": "Action found!\n\nModule Name: $activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].module$\nInstance ID: $activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].module_instance_id$\nAction ID: $activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].id$\nAction Title: $activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].title$\nAction URL: /iroh-response$activity.definition_activity_01LFV7DC7YWD84BDrpXGubWptCEHj7g1wa9.input.source_array[@].url$",
+                                  "skip_execution": false
+                                },
+                                "object_type": "definition_activity"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "unique_name": "definition_activity_01LFV7ES96DL25JeK8Evxqe9LxIObjy4iyF",
+                    "name": "Completed",
+                    "title": "Action not found",
+                    "type": "logic.completed",
+                    "base_type": "activity",
+                    "properties": {
+                      "completion_type": "failed-completed",
+                      "continue_on_failure": false,
+                      "display_name": "Action not found",
+                      "result_message": "A matching action was not found for the input provided. Remember, the action name must match what's in CTR exactly.",
+                      "skip_execution": false
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "categories": [
+      "category_01LFVC3JCKKBQ1UfvFwNNrvmyENRe5QPcKP"
+    ]
+  },
+  "categories": {
+    "category_01LFVC3JCKKBQ1UfvFwNNrvmyENRe5QPcKP": {
+      "unique_name": "category_01LFVC3JCKKBQ1UfvFwNNrvmyENRe5QPcKP",
+      "name": "AMP-SNOW-PROJECT",
+      "title": "AMP-SNOW-PROJECT",
+      "type": "basic.category",
+      "base_type": "category",
+      "description": "CHRIVAND",
+      "category_type": "custom",
+      "object_type": "category"
+    }
+  },
+  "targets": {
+    "definition_target_01IHHL6CSE7M76lUSYu0kSHwLlVTw8u63Pw": {
+      "unique_name": "definition_target_01IHHL6CSE7M76lUSYu0kSHwLlVTw8u63Pw",
+      "name": "CTR IROH BASE URL",
+      "title": "CTR IROH BASE URL",
+      "type": "web-service.endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "disable_certificate_validation": false,
+        "display_name": "CTR IROH BASE URL",
+        "host": "visibility.amp.cisco.com",
+        "ignore_proxy": false,
+        "no_runtime_user": true,
+        "path": "/iroh/",
+        "protocol": "https"
+      }
+    },
+    "definition_target_01LYH2TNGIVL145yjq4b5IyRe7nsMVf273d": {
+      "unique_name": "definition_target_01LYH2TNGIVL145yjq4b5IyRe7nsMVf273d",
+      "name": "CTR_For_Access_Token",
+      "title": "CTR Target for access token",
+      "type": "web-service.endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "default_runtime_user_id": "definition_runtime_user_01G9UGCFYZ7CN0OelN4pKwTDtjDeg7X9IHE",
+        "description": "CTR_For_Access_Token",
+        "disable_certificate_validation": false,
+        "display_name": "CTR_For_Access_Token",
+        "host": "visibility.amp.cisco.com",
+        "no_runtime_user": false,
+        "path": "/iroh",
+        "protocol": "https"
+      }
+    }
+  },
+  "runtime_users": {
+    "definition_runtime_user_01G9UGCFYZ7CN0OelN4pKwTDtjDeg7X9IHE": {
+      "unique_name": "definition_runtime_user_01G9UGCFYZ7CN0OelN4pKwTDtjDeg7X9IHE",
+      "name": "CTR_Credentials",
+      "title": "CTR_Credentials",
+      "description": "Account Key for CTR",
+      "type": "runtime_user.web-service_basic_credentials",
+      "base_type": "runtime_user",
+      "object_type": "definition_runtime_user",
+      "properties": {
+        "auth_option": "*****",
+        "basic_password": "*****",
+        "basic_username": "*****",
+        "display_name": "CTR_Credentials"
+      }
+    }
+  },
+  "variables": {
+    "variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up": {
+      "unique_name": "variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up",
+      "properties": {
+        "value": "3bb369d5-ace0-4789-baa4-feee05b2e532/01KY7ZBDZUR5J7faM8h5sR5NWQKJCK81KOx",
+        "scope": "global",
+        "name": "SERVICENOW-RESPONSE-WF-ID",
+        "type": "datatype.string",
+        "is_required": false,
+        "is_invisible": false
+      },
+      "object_type": "variable"
+    }
+  },
+  "atomic_workflows": [
+    "definition_workflow_01KWJ2ISZTF2V6ibRYe7FZ7sOuycDOpnwss",
+    "definition_workflow_01LN1L19T0TV005DmQQel75kxFub6INhKKO"
+  ]
+}

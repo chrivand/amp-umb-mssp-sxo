@@ -1,0 +1,965 @@
+{
+    "workflow": {
+      "unique_name": "definition_workflow_01NFJZGFLFTM454roGFDUPKtDnvKXCt7LjH",
+      "name": "MSSP-Umbrella-Trigger-5min",
+      "title": "MSSP-Umbrella-Trigger-5min",
+      "type": "generic.workflow",
+      "base_type": "workflow",
+      "variables": null,
+      "properties": {
+        "atomic": {
+          "is_atomic": false
+        },
+        "delete_workflow_instance": false,
+        "description": "RUNS SCHEDULED\n---\nThis workflow uses the global table with encoded API credentials for the added AMP and Umbrella MSSP customers.  It will loop through these API keys and obtain the AMP events for the past 5 minutes. This workflow can be scheduled to run every 5 minutes. It is also possible to configure which events are deemed as important to retrieve. The suggestion is to retrieve only high priority events, such as events Command&Control and Cryptomining. This workflow will then create a SecureX incident, as well as a ServiceNow incident.",
+        "display_name": "MSSP-Umbrella-Trigger-5min",
+        "runtime_user": {
+          "override_target_runtime_user": false,
+          "specify_on_workflow_start": false,
+          "target_default": true
+        },
+        "target": {
+          "execute_on_target_group": true,
+          "target_group": {
+            "target_group_id": "target_group_01NFK52VUH9YJ2T0aSdYFkPMxflKkl71OLZ",
+            "run_on_all_targets": true,
+            "selected_target_types": [
+              "web-service.endpoint"
+            ]
+          }
+        }
+      },
+      "object_type": "definition_workflow",
+      "actions": [
+        {
+          "unique_name": "definition_activity_01OIIGTKVOMCW1ZVdJdOJLyVDEFdWzdETfh",
+          "name": "For Each",
+          "title": "For Each Customer",
+          "type": "logic.for_each",
+          "base_type": "activity",
+          "properties": {
+            "continue_on_failure": false,
+            "display_name": "For Each Customer",
+            "skip_execution": false,
+            "source_array": "$global.variable_01OIGED6AOKJF1xDkDhe3D8nDvq7sNPFk7d.global.variable_01OIGED6AOKJF1xDkDhe3D8nDvq7sNPFk7d$"
+          },
+          "object_type": "definition_activity",
+          "actions": [
+            {
+              "unique_name": "definition_activity_01NFJZKPWYJQ96MjdtMH5o3Vrb00a14QpPU",
+              "name": "Umbrella - Reporting v2 - Get Token - MSSP Adjusted",
+              "title": "Umbrella - Reporting v2 - Get Token - MSSP Adjusted",
+              "type": "workflow.atomic_workflow",
+              "base_type": "subworkflow",
+              "properties": {
+                "continue_on_failure": false,
+                "display_name": "Umbrella - Reporting v2 - Get Token - MSSP Adjusted",
+                "input": {
+                  "variable_workflow_01OIIJWJJ1LQS70bGCLmBGjNagXZSEnxvHz": "$activity.definition_activity_01OIIGTKVOMCW1ZVdJdOJLyVDEFdWzdETfh.input.source_array[@].encoded_umb_api_credentials$"
+                },
+                "runtime_user": {
+                  "target_default": true
+                },
+                "skip_execution": false,
+                "target": {
+                  "override_workflow_target": true,
+                  "target_id": "definition_target_01NFK2JQKCBN26OmgzxlLyOnqWXidUXRqVa",
+                  "target_type": "web-service.endpoint"
+                },
+                "workflow_id": "definition_workflow_01JAL22JA2KDM70amrajus8K4adt80jPl6C"
+              },
+              "object_type": "definition_activity"
+            },
+            {
+              "unique_name": "definition_activity_01NFJZNBI7C2G74xuwfNmi2KihUrCkjksCV",
+              "name": "Umbrella - Get Blocked C2C + Cryptomining Activity",
+              "title": "Umbrella - Get Blocked C2C + Cryptomining Activity",
+              "type": "workflow.atomic_workflow",
+              "base_type": "subworkflow",
+              "properties": {
+                "continue_on_failure": false,
+                "description": "Currently only requesting Command & Control and Cryptomining events, since those events indicate a compromise. Phishing and Malware blocks only indicates someone browsing to the wrong site.",
+                "display_name": "Umbrella - Get Blocked C2C + Cryptomining Activity",
+                "input": {
+                  "variable_workflow_01JALKO710UTO2wZpcvuLmzqFv1FA3xFzwq": "-5minutes",
+                  "variable_workflow_01JALKYCHU7PZ0s6aeNGfrpqMw1pg4z93nL": "now",
+                  "variable_workflow_01JALL678YJP16G9M6pDJgCQDJDEd1uClcJ": "$activity.definition_activity_01OIIGTKVOMCW1ZVdJdOJLyVDEFdWzdETfh.input.source_array[@].umb_org_ID$",
+                  "variable_workflow_01JALLM5UG9555ntDGvFTiJlhR0Wn56dGXk": 100,
+                  "variable_workflow_01JALM16JSYI968TLYjyDQ4KMQ8p6QwTEYP": 0,
+                  "variable_workflow_01JALN226TACI3NLBO4sZ5XkjL6FZWKEqVi": "verdict=blocked&categories=65,150",
+                  "variable_workflow_01JALOYJ7F43M7gSov8Ntx5l0vd8WjUt1lC": "$activity.definition_activity_01NFJZKPWYJQ96MjdtMH5o3Vrb00a14QpPU.output.variable_workflow_01JAL4N53R4SK3xdy9WH4uXGM8tGXCh87xF$",
+                  "variable_workflow_01JAM4ETYM1J95FPj4k0xYyEYNiGuOoZXvF": ""
+                },
+                "runtime_user": {
+                  "target_default": true
+                },
+                "skip_execution": false,
+                "target": {
+                  "use_workflow_target_group": true
+                },
+                "workflow_id": "definition_workflow_01JAL8FWN0U1D7NP3p9TlCVEYn1wfnyji8a"
+              },
+              "object_type": "definition_activity"
+            },
+            {
+              "unique_name": "definition_activity_01OIIMNFDOTB46SVXlqcuyoKkBptukc3FpL",
+              "name": "Condition Block",
+              "title": "Were there new events?",
+              "type": "logic.if_else",
+              "base_type": "activity",
+              "properties": {
+                "continue_on_failure": false,
+                "display_name": "Were there new events?",
+                "skip_execution": false
+              },
+              "object_type": "definition_activity",
+              "blocks": [
+                {
+                  "unique_name": "definition_activity_01OIIMNUPW7EF1Mbjue7enafh3g5UDCsDOq",
+                  "name": "Condition Branch",
+                  "title": "NO",
+                  "type": "logic.condition_block",
+                  "base_type": "activity",
+                  "properties": {
+                    "condition": {
+                      "left_operand": "$activity.definition_activity_01NFJZNBI7C2G74xuwfNmi2KihUrCkjksCV.output.variable_workflow_01JAMDXA8YJ095OKm5JHigaQIaCLQF9DtUS$",
+                      "operator": "eq",
+                      "right_operand": 0
+                    },
+                    "continue_on_failure": false,
+                    "display_name": "NO",
+                    "skip_execution": false
+                  },
+                  "object_type": "definition_activity",
+                  "actions": [
+                    {
+                      "unique_name": "definition_activity_01OIIOZ8A4OO77bmAMpoIbnXh74YQ7sxCXq",
+                      "name": "Continue",
+                      "title": "Skip customer",
+                      "type": "logic.continue",
+                      "base_type": "activity",
+                      "properties": {
+                        "continue_on_failure": false,
+                        "display_name": "Skip customer",
+                        "skip_execution": false
+                      },
+                      "object_type": "definition_activity"
+                    }
+                  ]
+                },
+                {
+                  "unique_name": "definition_activity_01OIIMNVBU3587Xca4Lx1jYGIf5XBMJsmqr",
+                  "name": "Condition Branch",
+                  "title": "yes",
+                  "type": "logic.condition_block",
+                  "base_type": "activity",
+                  "properties": {
+                    "condition": {
+                      "left_operand": "$activity.definition_activity_01NFJZNBI7C2G74xuwfNmi2KihUrCkjksCV.output.variable_workflow_01JAMDXA8YJ095OKm5JHigaQIaCLQF9DtUS$",
+                      "operator": "ne",
+                      "right_operand": 0
+                    },
+                    "continue_on_failure": false,
+                    "display_name": "yes",
+                    "skip_execution": false
+                  },
+                  "object_type": "definition_activity",
+                  "actions": [
+                    {
+                      "unique_name": "definition_activity_01OIIVC00N86R6UocJnD0YYlLhmqcftURPv",
+                      "name": "Read Table from JSON",
+                      "title": "Read Table from JSON",
+                      "type": "corejava.read_table_from_json",
+                      "base_type": "activity",
+                      "properties": {
+                        "action_timeout": 180,
+                        "continue_on_failure": false,
+                        "display_name": "Read Table from JSON",
+                        "input_json": "$activity.definition_activity_01NFJZNBI7C2G74xuwfNmi2KihUrCkjksCV.output.variable_workflow_01JALS5488ZAL5BRhtCGiMvigAyQjDI5olm$",
+                        "jsonpath_query": "$.data",
+                        "persist_output": false,
+                        "populate_columns": false,
+                        "skip_execution": false,
+                        "table_columns": [
+                          {
+                            "column_name": "domain",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "categories",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "identities",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "date",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "time",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "externalip",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "internalip",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "url",
+                            "column_type": "string"
+                          },
+                          {
+                            "column_name": "type",
+                            "column_type": "string"
+                          }
+                        ]
+                      },
+                      "object_type": "definition_activity"
+                    },
+                    {
+                      "unique_name": "definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k",
+                      "name": "For Each",
+                      "title": "For Each Event",
+                      "type": "logic.for_each",
+                      "base_type": "activity",
+                      "properties": {
+                        "continue_on_failure": false,
+                        "display_name": "For Each Event",
+                        "skip_execution": false,
+                        "source_array": "$activity.definition_activity_01OIIVC00N86R6UocJnD0YYlLhmqcftURPv.output.read_table_from_json$"
+                      },
+                      "object_type": "definition_activity",
+                      "actions": [
+                        {
+                          "unique_name": "definition_activity_01OUH40NQTPAB2qeNtl1yfsiFW5Vzye5ELQ",
+                          "name": "Execute Python Script",
+                          "title": "Grab category and identity",
+                          "type": "python3.script",
+                          "base_type": "activity",
+                          "properties": {
+                            "action_timeout": 180,
+                            "continue_on_failure": false,
+                            "display_name": "Grab category and identity",
+                            "script": "import json, sys\ncategories_json = json.loads(sys.argv[1])\nidentities_json = json.loads(sys.argv[2])\ncategories_list = []\nfor category in categories_json:\n    categories_list.append(f\"{category['type']}: {category['label']}\")\nidentities_list = []\nfor identity in identities_json:\n    identities_list.append(f\"{identity['type']['label']}: {identity['id']}\")\nevent_type_output = str(categories_list)\nidentities_output = str(identities_list)",
+                            "script_arguments": [
+                              "$activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].categories$",
+                              "$activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].identities$"
+                            ],
+                            "script_queries": [
+                              {
+                                "script_query": "event_type_output",
+                                "script_query_name": "event_type_output",
+                                "script_query_type": "string"
+                              },
+                              {
+                                "script_query": "identities_output",
+                                "script_query_name": "identities_output",
+                                "script_query_type": "string"
+                              }
+                            ],
+                            "skip_execution": false
+                          },
+                          "object_type": "definition_activity"
+                        },
+                        {
+                          "unique_name": "definition_activity_01OJDFLPWM9SC1vJQTS1QJAMwrIKO5Q9fsB",
+                          "name": "MSSP-SecureX-and-ServiceNow-Incident",
+                          "title": "MSSP-SecureX-and-ServiceNow-Incident",
+                          "type": "workflow.sub_workflow",
+                          "base_type": "subworkflow",
+                          "properties": {
+                            "continue_on_failure": false,
+                            "display_name": "MSSP-SecureX-and-ServiceNow-Incident",
+                            "input": {
+                              "variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV": "$activity.definition_activity_01OIIGTKVOMCW1ZVdJdOJLyVDEFdWzdETfh.input.source_array[@].customer_name$",
+                              "variable_workflow_01OIJZ25ORPV83Im2ZAZKminrGmtSUjaTma": "$activity.definition_activity_01OUH40NQTPAB2qeNtl1yfsiFW5Vzye5ELQ.output.script_queries.event_type_output$",
+                              "variable_workflow_01OIJZ9BSTH5O1lSgMm6Vs1ymwgmCjo6WYS": "$activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].domain$ , $activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].externalip$ , $activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].internalip$, $activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].url$",
+                              "variable_workflow_01OIKIKRPTT443FsFFZIMXowFeEXfpPKxp7": "$activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].date$ - $activity.definition_activity_01OIIUWXPXZDS1pNCLhbSayzEfNugfz9S5k.input.source_array[@].time$",
+                              "variable_workflow_01OIKV0I55N6D7cfaIGDIqs4kkn2SYSDvo2": "$activity.definition_activity_01OUH40NQTPAB2qeNtl1yfsiFW5Vzye5ELQ.output.script_queries.identities_output$"
+                            },
+                            "runtime_user": {
+                              "target_default": true
+                            },
+                            "skip_execution": false,
+                            "target": {
+                              "execute_on_this_target_group": true,
+                              "target_group_id": "target_group_01EJ0TQWPQWBD0qiWqClJKj9FOzwiZRfOFH"
+                            },
+                            "workflow_id": "definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf"
+                          },
+                          "object_type": "definition_activity"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "categories": [
+        "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+      ]
+    },
+    "categories": {
+      "category_01OIJAGSEBKQ52NgI6YUC0QEwaTdevDJZKK": {
+        "unique_name": "category_01OIJAGSEBKQ52NgI6YUC0QEwaTdevDJZKK",
+        "name": "NEW-MSSP-PROJECT",
+        "title": "NEW-MSSP-PROJECT",
+        "type": "basic.category",
+        "base_type": "category",
+        "category_type": "custom",
+        "object_type": "category"
+      }
+    },
+    "triggers": {
+      "triggerschedule_01OIIFJTMLM0T0DlQw9n93AIBxp8AG9CkqQ": {
+        "workflow_id": "definition_workflow_01NFJZGFLFTM454roGFDUPKtDnvKXCt7LjH",
+        "name": "5 minute trigger",
+        "title": "",
+        "lowercase_name": "schedule.5_minute_trigger",
+        "type": "schedule",
+        "base_type": "trigger",
+        "ref_id": "schedule_01I2FJ1I9Y94V75zzzRsmdshv4Zh5n7TpgB",
+        "version": "1.0.0",
+        "disabled": true,
+        "unique_name": "triggerschedule_01OIIFJTMLM0T0DlQw9n93AIBxp8AG9CkqQ",
+        "object_type": "triggerschedule"
+      }
+    },
+    "schedules": {
+      "schedule_01I2FJ1I9Y94V75zzzRsmdshv4Zh5n7TpgB": {
+        "unique_name": "schedule_01I2FJ1I9Y94V75zzzRsmdshv4Zh5n7TpgB",
+        "name": "Every 5 Minutes",
+        "type": "basic.schedule",
+        "base_type": "schedule",
+        "properties": {
+          "calendar": "calendar_recurring_1BMfMWvgiDhSjBQ7hTSyvz3NyVZ",
+          "timezone": "Etc/GMT+0",
+          "starttime": "00:00",
+          "interval_hours": 0,
+          "interval_minutes": 5,
+          "number_of_times": 288,
+          "display_name": "Every 5 Minutes",
+          "description": ""
+        },
+        "version": "1.0.0",
+        "object_type": "schedule"
+      }
+    },
+    "targets": {
+      "definition_target_01FX4PWD1EN1B1euJDoxIVSkFE7dx2TVbwP": {
+        "unique_name": "definition_target_01FX4PWD1EN1B1euJDoxIVSkFE7dx2TVbwP",
+        "name": "CTR API Target",
+        "title": "CTR API Target",
+        "type": "web-service.endpoint",
+        "base_type": "target",
+        "object_type": "definition_target",
+        "properties": {
+          "description": "Target used to invoke iroh endpoints",
+          "disable_certificate_validation": true,
+          "display_name": "CTR API Target",
+          "host": "visibility.amp.cisco.com",
+          "no_runtime_user": true,
+          "path": "/iroh",
+          "protocol": "https"
+        }
+      },
+      "definition_target_01IG1A0XXOXSH5tDcEwprYvbbWHfu4ePGNx": {
+        "unique_name": "definition_target_01IG1A0XXOXSH5tDcEwprYvbbWHfu4ePGNx",
+        "name": "UMB_reporting_target",
+        "title": "UMB_reporting_target",
+        "type": "web-service.endpoint",
+        "base_type": "target",
+        "object_type": "definition_target",
+        "properties": {
+          "disable_certificate_validation": false,
+          "display_name": "UMB_reporting_target",
+          "host": "reports.api.umbrella.com",
+          "ignore_proxy": false,
+          "no_runtime_user": true,
+          "protocol": "https"
+        }
+      },
+      "definition_target_01NFK2JQKCBN26OmgzxlLyOnqWXidUXRqVa": {
+        "unique_name": "definition_target_01NFK2JQKCBN26OmgzxlLyOnqWXidUXRqVa",
+        "name": "management.api.umbrella.com",
+        "title": "management.api.umbrella.com",
+        "type": "web-service.endpoint",
+        "base_type": "target",
+        "object_type": "definition_target",
+        "properties": {
+          "disable_certificate_validation": false,
+          "display_name": "management.api.umbrella.com",
+          "host": "management.api.umbrella.com",
+          "ignore_proxy": false,
+          "no_runtime_user": true,
+          "protocol": "https"
+        }
+      }
+    },
+    "target_groups": {
+      "target_group_01EJ0TQWPQWBD0qiWqClJKj9FOzwiZRfOFH": {
+        "unique_name": "target_group_01EJ0TQWPQWBD0qiWqClJKj9FOzwiZRfOFH",
+        "name": "Default TargetGroup",
+        "title": "Default TargetGroup",
+        "type": "generic.target_group",
+        "base_type": "target_group",
+        "version": "1.0.0",
+        "targets": [
+          {
+            "data_target_type": "web-service.endpoint",
+            "view_target_type": "web-service.endpoint",
+            "include_all_targets": true
+          },
+          {
+            "data_target_type": "email.smtp_endpoint",
+            "view_target_type": "email.smtp_endpoint",
+            "include_all_targets": true
+          }
+        ],
+        "object_type": "target_group"
+      },
+      "target_group_01NFK52VUH9YJ2T0aSdYFkPMxflKkl71OLZ": {
+        "unique_name": "target_group_01NFK52VUH9YJ2T0aSdYFkPMxflKkl71OLZ",
+        "name": "CHRIVAND's group",
+        "title": "CHRIVAND's group",
+        "type": "generic.target_group",
+        "base_type": "target_group",
+        "version": "1.0.0",
+        "targets": [
+          {
+            "data_target_type": "web-service.endpoint",
+            "view_target_type": "web-service.endpoint",
+            "include_all_targets": false,
+            "selected_target_ids": [
+              "definition_target_01IG1A0XXOXSH5tDcEwprYvbbWHfu4ePGNx"
+            ]
+          }
+        ],
+        "object_type": "target_group"
+      }
+    },
+    "variables": {
+      "variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up": {
+        "unique_name": "variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up",
+        "properties": {
+          "value": "3bb369d5-ace0-4789-baa4-feee05b2e532/01KY7ZBDZUR5J7faM8h5sR5NWQKJCK81KOx",
+          "scope": "global",
+          "name": "SERVICENOW-RESPONSE-WF-ID",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "object_type": "variable"
+      },
+      "variable_01OIGED6AOKJF1xDkDhe3D8nDvq7sNPFk7d": {
+        "unique_name": "variable_01OIGED6AOKJF1xDkDhe3D8nDvq7sNPFk7d",
+        "schema_id": "tabletype_01OIGDRBKEF960WVsTfgWwBqUo1lbLQH2U4",
+        "properties": {
+          "value": [
+            {
+              "column_data": {
+                "customer_name": "Company CHRIS",
+                "encoded_amp_api_credentials": "OTFlZTQ4NTM3ZmY5N2Q1NjQ1M2E6ZmI3NTI4N2UtZjNhZS00NWM5LTgxMjktZGM5OTFhOWJlODEz",
+                "encoded_umb_api_credentials": "MDQ0ZTMyZmIyNWMwNGEzZGI1ZjBlYjBkMDA2NDVjNWY6NzM1MTcxZDNlYjc5NDQ5MTkxNTQ4MjI1ODM0ODM2MjU",
+                "umb_org_ID": "5325945"
+              }
+            },
+            {
+              "column_data": {
+                "customer_name": "customer-final-test",
+                "encoded_amp_api_credentials": "ZGNiMTkzZGFkYzZhNjYyODk5OGI6Mzc0ZTMwYzEtNjgwMi00ZGE0LWJlOGYtMDc2NmIzMGE4YmYx",
+                "encoded_umb_api_credentials": "MDQ0ZTMyZmIyNWMwNGEzZGI1ZjBlYjBkMDA2NDVjNWY6NzM1MTcxZDNlYjc5NDQ5MTkxNTQ4MjI1ODM0ODM2MjU=",
+                "umb_org_ID": "5325945"
+              }
+            }
+          ],
+          "scope": "global",
+          "name": "MSSP_api_creds",
+          "type": "datatype.table",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "object_type": "variable"
+      }
+    },
+    "table_types": {
+      "tabletype_01OIGDRBKEF960WVsTfgWwBqUo1lbLQH2U4": {
+        "unique_name": "tabletype_01OIGDRBKEF960WVsTfgWwBqUo1lbLQH2U4",
+        "data_type": "datatype.tabletype",
+        "display_name": "MSSP_List_API_keys_new",
+        "description": "AMP and Umbrella",
+        "columns": [
+          {
+            "name": "customer_name",
+            "title": "Customer Name",
+            "type": "string"
+          },
+          {
+            "name": "encoded_amp_api_credentials",
+            "title": "Encoded AMP API Credentials",
+            "type": "string"
+          },
+          {
+            "name": "encoded_umb_api_credentials",
+            "title": "Encoded UMB API Credentials",
+            "type": "string"
+          },
+          {
+            "name": "umb_org_ID",
+            "title": "Umbrella Org ID",
+            "type": "string"
+          }
+        ],
+        "base_type": "datatype",
+        "object_type": "tabletype"
+      }
+    },
+    "subworkflows": [
+      {
+        "workflow": {
+          "unique_name": "definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf",
+          "name": "MSSP-SecureX-and-ServiceNow-Incident",
+          "title": "MSSP-SecureX-and-ServiceNow-Incident",
+          "type": "generic.workflow",
+          "base_type": "workflow",
+          "variables": [
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "input",
+                "name": "raw_observables_string",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIJZ9BSTH5O1lSgMm6Vs1ymwgmCjo6WYS",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "input",
+                "name": "Customer Name",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "local",
+                "name": "securex_tr_encoded_url",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIKJIXHMCO76qTY4NH8fgSfnQpv60PaGC",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "{\n  \"version\": \"v1.2.0\",\n  \"metadata\": {\n    \"links\": {\n      \"self\": \"https://api.amp.cisco.com/v1/events?start_date=2020-08-18T11:30:00Z&event_type=1107296274\"\n    },\n    \"results\": {\n      \"total\": 2,\n      \"current_item_count\": 2,\n      \"index\": 0,\n      \"items_per_page\": 500\n    }\n  },\n  \"data\": [\n    {\n      \"id\": 2372428522896944000,\n      \"timestamp\": 1597750333,\n      \"timestamp_nanoseconds\": 507000000,\n      \"date\": \"2020-08-18T11:32:13+00:00\",\n      \"event_type\": \"Cloud IOC\",\n      \"event_type_id\": 1107296274,\n      \"connector_guid\": \"c9dea48f-2929-461b-962e-785601cd7ecf\",\n      \"group_guids\": [\n        \"c8f1832d-2032-444a-8d12-c07a55b62520\"\n      ],\n      \"severity\": \"Medium\",\n      \"start_timestamp\": 1597750332,\n      \"start_date\": \"2020-08-18T11:32:12+00:00\",\n      \"computer\": {\n        \"connector_guid\": \"c9dea48f-2929-461b-962e-785601cd7ecf\",\n        \"hostname\": \"CONTROLPOINT-47\",\n        \"external_ip\": \"13.57.222.81\",\n        \"active\": true,\n        \"network_addresses\": [\n          {\n            \"ip\": \"172.31.38.151\",\n            \"mac\": \"0e:0e:bb:5b:23:61\"\n          }\n        ],\n        \"links\": {\n          \"computer\": \"https://api.amp.cisco.com/v1/computers/c9dea48f-2929-461b-962e-785601cd7ecf\",\n          \"trajectory\": \"https://api.amp.cisco.com/v1/computers/c9dea48f-2929-461b-962e-785601cd7ecf/trajectory\",\n          \"group\": \"https://api.amp.cisco.com/v1/groups/c8f1832d-2032-444a-8d12-c07a55b62520\"\n        }\n      },\n      \"cloud_ioc\": {\n        \"description\": \"An outbound connection was made to a domain that is similar to randomly generated domains used by some malware command and control systems. The decision is based on n-gram analysis of the domain and determines the liklihood of the domain being randomly generated. Various aspect of surrounding context such as parent process, expected behaviour of the application, endpoint-locale of the endpoint etc. should be considered in further investigation of this event.\",\n        \"short_description\": \"ConnectionToSuspiciousDomain.ioc\"\n      },\n      \"network_info\": {\n        \"dirty_url\": \"http://dcb5684707f6c66492aaa9f7d9bfb5a6.biz/\",\n        \"parent\": {\n          \"disposition\": \"Unknown\",\n          \"identity\": {\n            \"sha256\": \"63a262f1a9392cfe94b81803ca0a4e886b9387d89327d0ba31913c082e56bd15\"\n          }\n        }\n      },\n      \"tactics\": [\n        \"TA0005\",\n        \"TA0002\"\n      ],\n      \"techniques\": [\n        \"T1220\"\n      ]\n    },\n    {\n      \"id\": 3362912125780353500,\n      \"timestamp\": 1597750312,\n      \"timestamp_nanoseconds\": 854000000,\n      \"date\": \"2020-08-18T11:31:52+00:00\",\n      \"event_type\": \"Cloud IOC\",\n      \"event_type_id\": 1107296274,\n      \"connector_guid\": \"c9dea48f-2929-461b-962e-785601cd7ecf\",\n      \"group_guids\": [\n        \"c8f1832d-2032-444a-8d12-c07a55b62520\"\n      ],\n      \"severity\": \"High\",\n      \"start_timestamp\": 1597750311,\n      \"start_date\": \"2020-08-18T11:31:51+00:00\",\n      \"computer\": {\n        \"connector_guid\": \"c9dea48f-2929-461b-962e-785601cd7ecf\",\n        \"hostname\": \"CONTROLPOINT-47\",\n        \"external_ip\": \"13.57.222.81\",\n        \"active\": true,\n        \"network_addresses\": [\n          {\n            \"ip\": \"172.31.38.151\",\n            \"mac\": \"0e:0e:bb:5b:23:61\"\n          }\n        ],\n        \"links\": {\n          \"computer\": \"https://api.amp.cisco.com/v1/computers/c9dea48f-2929-461b-962e-785601cd7ecf\",\n          \"trajectory\": \"https://api.amp.cisco.com/v1/computers/c9dea48f-2929-461b-962e-785601cd7ecf/trajectory\",\n          \"group\": \"https://api.amp.cisco.com/v1/groups/c8f1832d-2032-444a-8d12-c07a55b62520\"\n        }\n      },\n      \"cloud_ioc\": {\n        \"description\": \"Accessed URL matches characteristics of several malware families.\",\n        \"short_description\": \"GateDotPhp.ioc\"\n      },\n      \"network_info\": {\n        \"dirty_url\": \"http://fbsgang.info/cc/gate.php\",\n        \"parent\": {\n          \"disposition\": \"Unknown\",\n          \"identity\": {\n            \"sha256\": \"63a262f1a9392cfe94b81803ca0a4e886b9387d89327d0ba31913c082e56bd15\"\n          }\n        }\n      },\n      \"tactics\": [\n        \"TA0011\"\n      ]\n    }\n  ]\n}",
+                "scope": "local",
+                "name": "AMP Event JSON",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIJ5M02JWFQ5kOizk6Pa9eRk2QiL2Oahs",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "input",
+                "name": "event_type",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIJZ25ORPV83Im2ZAZKminrGmtSUjaTma",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "local",
+                "name": "json_response_object",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIJ5M02K0HE4XwmiBL7iHQc3PYI4RQsPG",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "input",
+                "name": "datetime_event",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIKIKRPTT443FsFFZIMXowFeEXfpPKxp7",
+              "object_type": "variable_workflow"
+            },
+            {
+              "schema_id": "datatype.string",
+              "properties": {
+                "value": "",
+                "scope": "input",
+                "name": "target_device",
+                "type": "datatype.string",
+                "is_required": false,
+                "is_invisible": false
+              },
+              "unique_name": "variable_workflow_01OIKV0I55N6D7cfaIGDIqs4kkn2SYSDvo2",
+              "object_type": "variable_workflow"
+            }
+          ],
+          "properties": {
+            "atomic": {
+              "is_atomic": false
+            },
+            "delete_workflow_instance": false,
+            "description": "This workflow uses the global table with encoded API credentials for the added AMP and Umbrella MSSP customers.  It will loop through these API keys and obtain the AMP events for the past 5 minutes. This workflow can be scheduled to run every 5 minutes. It is also possible to configure which events are deemed as important to retrieve. The suggestion is to retrieve only high priority events, such as events with a `HIGH` or `CRITICAL` severity. This workflow will then create a SecureX incident, as well as a ServiceNow incident.",
+            "display_name": "MSSP-SecureX-and-ServiceNow-Incident",
+            "runtime_user": {
+              "override_target_runtime_user": false,
+              "specify_on_workflow_start": false,
+              "target_default": true
+            },
+            "target": {
+              "execute_on_target_group": true,
+              "target_group": {
+                "target_group_id": "target_group_01EJ0TQWPQWBD0qiWqClJKj9FOzwiZRfOFH",
+                "run_on_all_targets": false,
+                "selected_target_types": [
+                  "web-service.endpoint"
+                ],
+                "use_criteria": {
+                  "choose_target_using_algorithm": "choose_first_with_matching_criteria",
+                  "conditions": [
+                    {
+                      "operator": "eqi",
+                      "left_operand": "$targetgroup.web-service endpoint.input.display_name$",
+                      "right_operand": "AMP_Target"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "object_type": "definition_workflow",
+          "actions": [
+            {
+              "unique_name": "definition_activity_01OQZMLXXYUOL43PnhE0af1O1GgElmjsE4K",
+              "name": "Group",
+              "title": "Prep incident body",
+              "type": "logic.group",
+              "base_type": "activity",
+              "properties": {
+                "continue_on_failure": false,
+                "display_name": "Prep incident body",
+                "skip_execution": false
+              },
+              "object_type": "definition_activity",
+              "actions": [
+                {
+                  "unique_name": "definition_activity_01OIJ5YUCMZSM65VSFO1EjtR1PXxrlRq9p2",
+                  "name": "Threat Response v2 - Generate Access Token",
+                  "title": "Threat Response v2 - Generate Access Token",
+                  "type": "workflow.atomic_workflow",
+                  "base_type": "subworkflow",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Threat Response v2 - Generate Access Token",
+                    "runtime_user": {
+                      "target_default": true
+                    },
+                    "skip_execution": false,
+                    "target": {
+                      "override_workflow_target": true,
+                      "target_id": "definition_target_01LYH2TNGIVL145yjq4b5IyRe7nsMVf273d",
+                      "target_type": "web-service.endpoint"
+                    },
+                    "workflow_id": "definition_workflow_01KWJ2ISZTF2V6ibRYe7FZ7sOuycDOpnwss"
+                  },
+                  "object_type": "definition_activity"
+                },
+                {
+                  "unique_name": "definition_activity_01OQZJMJUORYR0UbfP3A3oE7W0vLEjVHG2o",
+                  "name": "Threat Response v2 - Inspect for Observables",
+                  "title": "Threat Response v2 - Inspect for Observables",
+                  "type": "workflow.atomic_workflow",
+                  "base_type": "subworkflow",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Threat Response v2 - Inspect for Observables",
+                    "input": {
+                      "variable_workflow_01KXGKYZX7V1M2gr9pVGA5BZoTbgEQPSzF1": "$activity.definition_activity_01OIJ5YUCMZSM65VSFO1EjtR1PXxrlRq9p2.output.variable_workflow_01KWJ2ISHZ9753Hoi7x9S5EPpucAbm53HHF$",
+                      "variable_workflow_01KXGKYZX7ZLN1hoeZeh7hwWyjoEUkSJCbg": "$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJZ9BSTH5O1lSgMm6Vs1ymwgmCjo6WYS$"
+                    },
+                    "runtime_user": {
+                      "target_default": true
+                    },
+                    "skip_execution": false,
+                    "target": {
+                      "override_workflow_target": true,
+                      "target_id": "definition_target_01FX4PWD1EN1B1euJDoxIVSkFE7dx2TVbwP",
+                      "target_type": "web-service.endpoint"
+                    },
+                    "workflow_id": "definition_workflow_01KXGKZ0JA96P0p7omD4IdS6zKdw5ECiofU"
+                  },
+                  "object_type": "definition_activity"
+                },
+                {
+                  "unique_name": "definition_activity_01OIJZFFNVNWH6Zzqvxe42fPFGRjLuyp8ia",
+                  "name": "Execute Python Script",
+                  "title": "Create incident body",
+                  "type": "python3.script",
+                  "base_type": "activity",
+                  "properties": {
+                    "action_timeout": 180,
+                    "continue_on_failure": false,
+                    "display_name": "Create incident body",
+                    "script": "import sys, json\nfrom urllib.parse import quote\n\nsecurex_tr_base_url = \"https://visibility.amp.cisco.com/investigate?q=\"\nsecurex_tr_relative_url = \"\"\nobservables_string = \"\"\n\nobservables = json.loads(sys.argv[1])\n\nfor observable in observables:\n    securex_tr_relative_url =  f\"{securex_tr_relative_url}{observable['type']}={observable['value']}&\"\n    observables_string = (f\"{observables_string}{observable['type']}:\\\"{observable['value']}\\\",\")\n\nsecurex_tr_relative_url_encoded = quote(securex_tr_relative_url)\n\nsecurex_tr_encoded_url = securex_tr_base_url + securex_tr_relative_url_encoded",
+                    "script_arguments": [
+                      "$activity.definition_activity_01OQZJMJUORYR0UbfP3A3oE7W0vLEjVHG2o.output.variable_workflow_01KXGKYZX80T50ocjT0xlIvdikhoR0AGB5u$"
+                    ],
+                    "script_queries": [
+                      {
+                        "script_query": "securex_tr_encoded_url",
+                        "script_query_name": "securex_tr_encoded_url",
+                        "script_query_type": "string"
+                      },
+                      {
+                        "script_query": "observables_string",
+                        "script_query_name": "observables_string",
+                        "script_query_type": "string"
+                      }
+                    ],
+                    "skip_execution": false
+                  },
+                  "object_type": "definition_activity"
+                },
+                {
+                  "unique_name": "definition_activity_01OIKJRB5M62R6on0RXARIG5Y0cgyyVFLIy",
+                  "name": "Set Variables",
+                  "title": "Set securex_tr_encoded_url",
+                  "type": "core.set_multiple_variables",
+                  "base_type": "activity",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Set securex_tr_encoded_url",
+                    "skip_execution": false,
+                    "variables_to_update": [
+                      {
+                        "variable_to_update": "$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.local.variable_workflow_01OIKJIXHMCO76qTY4NH8fgSfnQpv60PaGC$",
+                        "variable_value_new": "$activity.definition_activity_01OIJZFFNVNWH6Zzqvxe42fPFGRjLuyp8ia.output.script_queries.securex_tr_encoded_url$"
+                      }
+                    ]
+                  },
+                  "object_type": "definition_activity"
+                }
+              ]
+            },
+            {
+              "unique_name": "definition_activity_01OIJ5YCLEEY44Wh6H0eCFe0hzMzn49tFYh",
+              "name": "Group",
+              "title": "SecureX Incident",
+              "type": "logic.group",
+              "base_type": "activity",
+              "properties": {
+                "continue_on_failure": false,
+                "display_name": "SecureX Incident",
+                "skip_execution": false
+              },
+              "object_type": "definition_activity",
+              "actions": [
+                {
+                  "unique_name": "definition_activity_01OIJ5ZQ46U3J09NgHGfemDH8TnBNqj0h8u",
+                  "name": "Threat Response v2 - Create Incident",
+                  "title": "Threat Response v2 - Create Incident",
+                  "type": "workflow.atomic_workflow",
+                  "base_type": "subworkflow",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Threat Response v2 - Create Incident",
+                    "input": {
+                      "variable_workflow_01KVVWMAKJ5X54vaAuNkKq259VyiO5JCeuC": "$activity.definition_activity_01OIJ5YUCMZSM65VSFO1EjtR1PXxrlRq9p2.output.variable_workflow_01KWJ2ISHZ9753Hoi7x9S5EPpucAbm53HHF$",
+                      "variable_workflow_01KVVWMAKJ9HX4TuMb2g74UqzpRLRxjwlwm": "[$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV$] - New Cisco Secure event [$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJZ25ORPV83Im2ZAZKminrGmtSUjaTma$] event for [$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIKV0I55N6D7cfaIGDIqs4kkn2SYSDvo2$] @ [$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIKIKRPTT443FsFFZIMXowFeEXfpPKxp7$] [Generated by SecureX orchestration for ServiceNow]",
+                      "variable_workflow_01KVVWMAKJBSF1Fxv8uLSCRGpOJCxkue4OH": "**Customer name:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV$\n\n**Event type:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJZ25ORPV83Im2ZAZKminrGmtSUjaTma$\n\n**Datetime:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIKIKRPTT443FsFFZIMXowFeEXfpPKxp7$\n\n**Observables:** $activity.definition_activity_01OIJZFFNVNWH6Zzqvxe42fPFGRjLuyp8ia.output.script_queries.observables_string$\n\n**Investigate with SecureX threat response:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.local.variable_workflow_01OIKJIXHMCO76qTY4NH8fgSfnQpv60PaGC$",
+                      "variable_workflow_01KWIVDCZ7VJU1t9jPK4nZnnwHqnllu7dJm": "New",
+                      "variable_workflow_01KWIVQVGZKUC0vUPbm3oCvqsYVV036tieP": "High",
+                      "variable_workflow_01LFBWLGJNHPS450Wh1dwGf1Xqot6KHUTwY": "amber"
+                    },
+                    "runtime_user": {
+                      "target_default": true
+                    },
+                    "skip_execution": false,
+                    "target": {
+                      "execute_on_this_target": true,
+                      "target_id": "definition_target_01GFLB674BHNQ27x9bozYywZrhZpYmkSagz",
+                      "target_type": "web-service.endpoint"
+                    },
+                    "workflow_id": "definition_workflow_01KVVWMB2UTRF5uVHVH9DtiT6vgIfnzTdRS"
+                  },
+                  "object_type": "definition_activity"
+                }
+              ]
+            },
+            {
+              "unique_name": "definition_activity_01OIJ60PKW8AA3CkZIY7VMjM946UVJLND9b",
+              "name": "Group",
+              "title": "ServiceNow Incident",
+              "type": "logic.group",
+              "base_type": "activity",
+              "properties": {
+                "continue_on_failure": false,
+                "display_name": "ServiceNow Incident",
+                "skip_execution": false
+              },
+              "object_type": "definition_activity",
+              "actions": [
+                {
+                  "unique_name": "definition_activity_01OIJ617RWQV2173NEn19eCkDplAUCdWyrc",
+                  "name": "Service Now - Create Incident",
+                  "title": "Service Now - Create Incident",
+                  "type": "workflow.atomic_workflow",
+                  "base_type": "subworkflow",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Service Now - Create Incident",
+                    "input": {
+                      "variable_workflow_01C0CK2MY2SLG1FXph6ZHp7iHmRw1KvUFlN": "[$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV$]] - New Cisco Secure event [$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJZ25ORPV83Im2ZAZKminrGmtSUjaTma$] event for [$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIKV0I55N6D7cfaIGDIqs4kkn2SYSDvo2$] @ [$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIKIKRPTT443FsFFZIMXowFeEXfpPKxp7$] [Generated by SecureX orchestration for ServiceNow]",
+                      "variable_workflow_01FGYF0DUR8HV2TMpEKctsYjQR4mzjD5OTu": "New AMP event, please see work notes for more info. Incident generated by SecureX orchestration.",
+                      "variable_workflow_01FGYGCZL5M2E1m1O5tvVVn0DVzVTLwytei": 1,
+                      "variable_workflow_01FGYGPFJYM4L5aVpzNOhRwMmzKJDofqufe": 1,
+                      "variable_workflow_01FGYGZ0OYYNM5pWjyyreMjNHDjusjNe8jx": "**Customer name:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV$\n**Event type:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJZ25ORPV83Im2ZAZKminrGmtSUjaTma$\n**Datetime:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIKIKRPTT443FsFFZIMXowFeEXfpPKxp7$\n**Observables:** $activity.definition_activity_01OIJZFFNVNWH6Zzqvxe42fPFGRjLuyp8ia.output.script_queries.observables_string$\n**Investigate with SecureX threat response:** $workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.local.variable_workflow_01OIKJIXHMCO76qTY4NH8fgSfnQpv60PaGC$",
+                      "variable_workflow_01FGYI8HES41K63G3UzMinBH3iApm37fBGt": "admin",
+                      "variable_workflow_01FMQD0HIJIDU5kce0VNx4HQiMYjMfUvBlj": "v2"
+                    },
+                    "runtime_user": {
+                      "target_default": true
+                    },
+                    "skip_execution": false,
+                    "target": {
+                      "override_workflow_target": true,
+                      "target_id": "definition_target_01L7L3HC5ZGUS7ANo7KOQb9qCUImYmnmGyW",
+                      "target_type": "web-service.endpoint"
+                    },
+                    "workflow_id": "definition_workflow_01C0BYD0GI1KZ0mxScCSxVrfX70zrUdqLlW"
+                  },
+                  "object_type": "definition_activity"
+                },
+                {
+                  "unique_name": "definition_activity_01OIJ625FSIL35ULROhClBhrfZ60rvh1K2j",
+                  "name": "Set Variables",
+                  "title": "Set response json object",
+                  "type": "core.set_multiple_variables",
+                  "base_type": "activity",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Set response json object",
+                    "skip_execution": false,
+                    "variables_to_update": [
+                      {
+                        "variable_to_update": "$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.local.variable_workflow_01OIJ5M02K0HE4XwmiBL7iHQc3PYI4RQsPG$",
+                        "variable_value_new": "{\"snow-incident-id\":\"$activity.definition_activity_01OIJ617RWQV2173NEn19eCkDplAUCdWyrc.output.variable_workflow_01C0F7F9L7IYM3YXHCizJhunwKtPlSJWEWM$\",\"securex-incident-id\":\"$activity.definition_activity_01OIJ5ZQ46U3J09NgHGfemDH8TnBNqj0h8u.output.variable_workflow_01KVVWMAKJDWL0w7z086xbnRNZMwGcpxweP$\",\"customer-name\":\"$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.input.variable_workflow_01OIJT6BBFNN73pYFEtqoNwLVYDXWWuneGV$\"}"
+                      }
+                    ]
+                  },
+                  "object_type": "definition_activity"
+                },
+                {
+                  "unique_name": "definition_activity_01OIJ62NCGLOC5Of7lihYFKg1kEj4Qn7Emp",
+                  "name": "Execute Python Script",
+                  "title": "URL encode relative url",
+                  "type": "python3.script",
+                  "base_type": "activity",
+                  "properties": {
+                    "action_timeout": 180,
+                    "continue_on_failure": false,
+                    "display_name": "URL encode relative url",
+                    "script": "from urllib.parse import quote\nimport sys\n\njson = sys.argv[1]\nurl_encoded_json = quote(json)\nresponse_id  = sys.argv[2]\nsplit_response_id = response_id.split(\"/\")\nrelative_url = \"respond/trigger/\" + split_response_id[0] + \"/\" + split_response_id[1] + \"?observable_type=ip&observable_value=\" + url_encoded_json + \"&workflow_id=\" + split_response_id[1]",
+                    "script_arguments": [
+                      "$workflow.definition_workflow_01OIJ5M08VDBQ77CI5EEz4zWiHeEcvdgOEf.local.variable_workflow_01OIJ5M02K0HE4XwmiBL7iHQc3PYI4RQsPG$",
+                      "$global.variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up.global.variable_01LFZFZN2H8E05415ssrZUXUViZUalEg3Up$"
+                    ],
+                    "script_queries": [
+                      {
+                        "script_query": "relative_url",
+                        "script_query_name": "relative_url",
+                        "script_query_type": "string"
+                      }
+                    ],
+                    "skip_execution": false
+                  },
+                  "object_type": "definition_activity"
+                },
+                {
+                  "unique_name": "definition_activity_01OIJ635JSH3L17bZisIlNyObsMztWwvlod",
+                  "name": "Service Now - Add Work Note to Incident",
+                  "title": "Service Now - Add Work Note to Incident",
+                  "type": "workflow.atomic_workflow",
+                  "base_type": "subworkflow",
+                  "properties": {
+                    "continue_on_failure": false,
+                    "display_name": "Service Now - Add Work Note to Incident",
+                    "input": {
+                      "variable_workflow_01FMQTASNW19F198DyWHV14WHmkxNhmxaQu": "$activity.definition_activity_01OIJ62NCGLOC5Of7lihYFKg1kEj4Qn7Emp.output.script_queries.relative_url$",
+                      "variable_workflow_01FMQTASNW78T0tgvbFoES84str3rrkOfBq": "v2",
+                      "variable_workflow_01FMQVGD9LTQK0vkSN3y7c0YHxc5cWQnVRt": "$activity.definition_activity_01OIJ617RWQV2173NEn19eCkDplAUCdWyrc.output.variable_workflow_01C0F7F9L7IYM3YXHCizJhunwKtPlSJWEWM$"
+                    },
+                    "runtime_user": {
+                      "target_default": true
+                    },
+                    "skip_execution": false,
+                    "target": {
+                      "override_workflow_target": true,
+                      "target_id": "definition_target_01L7L3HC5ZGUS7ANo7KOQb9qCUImYmnmGyW",
+                      "target_type": "web-service.endpoint"
+                    },
+                    "workflow_id": "definition_workflow_01FMQTAT3H5VC4NVbonulAhVztfqidbUGlJ"
+                  },
+                  "object_type": "definition_activity"
+                }
+              ]
+            }
+          ],
+          "categories": [
+            "category_01OIJAGSEBKQ52NgI6YUC0QEwaTdevDJZKK"
+          ]
+        }
+      }
+    ],
+    "atomic_workflows": [
+      "definition_workflow_01C0BYD0GI1KZ0mxScCSxVrfX70zrUdqLlW",
+      "definition_workflow_01FMQTAT3H5VC4NVbonulAhVztfqidbUGlJ",
+      "definition_workflow_01JAL22JA2KDM70amrajus8K4adt80jPl6C",
+      "definition_workflow_01JAL8FWN0U1D7NP3p9TlCVEYn1wfnyji8a",
+      "definition_workflow_01KXGKZ0JA96P0p7omD4IdS6zKdw5ECiofU",
+      "definition_workflow_01KWJ2ISZTF2V6ibRYe7FZ7sOuycDOpnwss",
+      "definition_workflow_01KVVWMB2UTRF5uVHVH9DtiT6vgIfnzTdRS"
+    ]
+  }
