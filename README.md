@@ -12,9 +12,9 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 1. [Features and flow](##features-and-flow)
 2. [Installation steps](#installation-steps)
     1. [Import the first workflow to add encoded AMP API keys to table](#import-the-first-workflow-to-add-encoded-amp-api-keys-to-table)
-    2. [Import the second workflow to create SecureX and ServiceNow incidents](#)
-    3. [Import the third workflow to retrieve AMP events](#)
-    4. [Import the fourth workflow to retrieve Umbrella events](#)
+    2. [Import the second workflow to create SecureX and ServiceNow incidents](#import-the-second-workflow-to-create-securex-and-servicenow-incidents)
+    3. [Import the third workflow to retrieve AMP events](#import-the-third-workflow-to-retrieve-amp-events)
+    4. [Import the fourth workflow to retrieve Umbrella events](import-the-fourth-workflow-to-retrieve-umbrella-events#)
     5. [Import the fifth workflow that is triggered when ServiceNow incident is closed](#import-the-fifth-workflow-that-is-triggered-when-servicenow-incident-is-closed)
     6. [Import the sixth workflow that sets a global variable containing the ID of the third workflow](#import-the-sixth-workflow-that-sets-a-global-variable-containing-the-id-of-the-third-workflow)
     7. [Testing and running the solution](#testing-and-running-the-solution)
@@ -166,7 +166,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 ## Required workflows, targets, accounts keys, global variables
 
 * Atomic Workflow: **Umbrella - Reporting v2 - Get Activity** [imported here](https://ciscosecurity.github.io/sxo-05-security-workflows/importing)
-* Atomic Workflow: **Umbrella - Reporting v2 - Get Token - MSSP Adjusted** [import here](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/Umbrella) - Reporting v2 - Get Token - MSSP Adjusted.json)
+* Atomic Workflow: **Umbrella - Reporting v2 - Get Token - MSSP Adjusted** [import here](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/Umbrella%20-%20Reporting%20v2%20-%20Get%20Token%20-%20MSSP%20Adjusted.json)
 * Main Workflow: [MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Umbrella-Trigger-5min.json)
 * Target: **Umbrella Management** (no account keys!), **Umbrella Reporting v2** (no account keys!)
 * Global variable: **MSSP_api_creds**
