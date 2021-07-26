@@ -1,5 +1,5 @@
 ![License: CISCO](https://img.shields.io/badge/License-CISCO-blue.svg)
-[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/chrivand/amp-mssp-events-to-snow)
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/chrivand/amp-umb-mssp-sxo)
 
 # SecureX orchestration workflows: Cisco Secure Endpoint (AMP4E) and Cisco Umbrella MSSP customer events to SecureX incident and ServiceNow incident
 
