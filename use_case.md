@@ -1,9 +1,9 @@
-Cisco Secure Endpoint MSSP security event handling with SecureX and ServiceNow
+Cisco Secure Endpoint and Cisco Umbrella MSSP security event handling with SecureX and ServiceNow
 =====================================
 Which events are high priority? Which should trigger incidents to be created?
 
 ## Business Case
-Many Managed Security Services Partners (MSSP) strugle in managing their customers' security events as. This use case specifically focusses on Cisco Secure Endpoint (formerly known as AMP), SecureX and ServiceNow. This sample solution can obviously be extrapolated to other solutions too. This sample solution is a working prototype, built in SecureX Orchestration, and is executed when certain high priority events (like when a computer is compromised) occur. It will automatically create a SecureX incident, as well as a ServiceNow incident. Many MSSP's use ServiceNow or some other ticketing system to manage their customers, so now they can keep using that interface. When the incident is handled and closed, this will also automatically close the SecureX incident for auditing purposes. This results in a single pane of glass for the MSSP: they can use SecureX and Secure Endpoint on the background via ServiceNow!
+Many Managed Security Services Partners (MSSP) strugle in managing their customers' security events as. This use case specifically focusses on Cisco Secure Endpoint (formerly known as AMP), Cisco Umbrella, SecureX and ServiceNow. This sample solution can obviously be extrapolated to other solutions too. This sample solution is a working prototype, built in SecureX Orchestration, and is executed when certain high priority AMP and Umbrella events (like when a computer is compromised) occur. It will automatically create a SecureX incident, as well as a ServiceNow incident. Many MSSP's use ServiceNow or some other ticketing system to manage their customers, so now they can keep using that interface. When the incident is handled and closed, this will also automatically close the SecureX incident for auditing purposes. This results in a single pane of glass for the MSSP: they can use SecureX, Secure Endpoint and Umbrella on the background via ServiceNow!
 
 This entire solution is built inside of SecureX orchestation:
 * SecureX orchestration provides a no-to-low code approach for building automated workflows. 
@@ -11,7 +11,7 @@ This entire solution is built inside of SecureX orchestation:
 * This repository contains workflows that can be imported into SecureX orchestration and are easy to set up, without having to know code syntax.
 
 ## Related Code Exchange submission
-Please see the workflow installation information [here](https://developer.cisco.com/codeexchange/github/repo/chrivand/amp-mssp-events-to-snow).
+Please see the workflow installation information [here](https://developer.cisco.com/codeexchange/github/repo/chrivand/amp-umb-mssp-sxo).
 
 ## White Paper
 Please continue your reading in this [white paper](https://www.cisco.com/c/en/us/products/collateral/security/white-paper-c11-744498.html).
