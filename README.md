@@ -24,19 +24,19 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 
 ## Features and flow
-1. The **first** workflow ([MSSP-Add-AMP+UMB-Creds.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Add-AMP+UMB-Creds.json)) will be able to obtain user input to add Cisco Secure Endpoint (AMP4E) and Cisco Umbrella API Credentials + customer name and store them base 64 encoded in a table. Please note that the credentials are base 64 encoded, however are stored in the global table variable. SecureX is secured with MFA, but this still needs to be taken into consideration. This workflow only needs to be run initially and every time you add a customer to your MSSP portal.
+1. The **first** workflow ([MSSP-Add-AMP+UMB-Creds.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-Add-AMP%2BUMB-Creds.json)) will be able to obtain user input to add Cisco Secure Endpoint (AMP4E) and Cisco Umbrella API Credentials + customer name and store them base 64 encoded in a table. Please note that the credentials are base 64 encoded, however are stored in the global table variable. SecureX is secured with MFA, but this still needs to be taken into consideration. This workflow only needs to be run initially and every time you add a customer to your MSSP portal.
 
-2. The **second** workflow ([MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-SecureX-and-ServiceNow-Incident.json)) will create a SecureX incident, as well as a ServiceNow incident. It will make sure the ServiceNow incidents has information to close the loop back to SecureX by closing the incident. Optionally this workflow is able to isolate the AMP host or move it to a Triage group. 
+2. The **second** workflow ([MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-SecureX-and-ServiceNow-Incident.json)) will create a SecureX incident, as well as a ServiceNow incident. It will make sure the ServiceNow incidents has information to close the loop back to SecureX by closing the incident. Optionally this workflow is able to isolate the AMP host or move it to a Triage group. 
 
 > **Note:** this workflow can be used to create incidents for other security event sources as well. Check out the input variables to see how to use it as child workflow.
 
-3. The **third** ([MSSP-AMP-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-AMP-Trigger-5min.json)) and **fourth** ([MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Umbrella-Trigger-5min.json)) workflows  will loop through these API keys and obtain the AMP and Umbrella events for the past 5 minutes. This workflow can be scheduled to run every 5 minutes (or otherwise). It is also possible to configure which events are deemed as important to retrieve. The suggestion is to retrieve only high priority events, such as events with a `HIGH` or `CRITICAL` severity (AMP) and `Command and Control` or `Cryptomining` events (Umbrella). These events indicate that a host is actually compromised, and thus need attention from the Security Operations Center. 
+3. The **third** ([MSSP-AMP-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-AMP-Trigger-5min.json)) and **fourth** ([MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-Umbrella-Trigger-5min.json)) workflows  will loop through these API keys and obtain the AMP and Umbrella events for the past 5 minutes. This workflow can be scheduled to run every 5 minutes (or otherwise). It is also possible to configure which events are deemed as important to retrieve. The suggestion is to retrieve only high priority events, such as events with a `HIGH` or `CRITICAL` severity (AMP) and `Command and Control` or `Cryptomining` events (Umbrella). These events indicate that a host is actually compromised, and thus need attention from the Security Operations Center. 
 
 > **Note:** workflow 5 and 6 are optional, but recommended since it will connect ServiceNow back with SecureX. It does require some extra work to get setup...
 
-4. The **fifth** workflow ([SET-SERVICENOW-RESPONSE-WF-ID.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/SET-SERVICENOW-RESPONSE-WF-ID.json)) only needs to be run once initially. This workflow sets a global variable containing the ID of the second workflow. This is needed by ServiceNow (using an outbound API call) to run the fourth and final workflow of this solution.
+4. The **fifth** workflow ([SET-SERVICENOW-RESPONSE-WF-ID.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/SET-SERVICENOW-RESPONSE-WF-ID.json)) only needs to be run once initially. This workflow sets a global variable containing the ID of the second workflow. This is needed by ServiceNow (using an outbound API call) to run the fourth and final workflow of this solution.
 
-5. The **sixth** workflow ([SERVICENOW-TO-AMP.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/SERVICENOW-TO-AMP.json)) will be able to close the SecureX incident when the ServiceNow incident is closed. It will also optionally be able to stop the AMP host isolation and move the host back to its original group. The ServiceNow incident ID will be added to the SecureX incident to fully sync the 2 systems. This workflow will be called via an outbound API call from ServiceNow.
+5. The **sixth** workflow ([SERVICENOW-TO-AMP.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/SERVICENOW-TO-AMP.json)) will be able to close the SecureX incident when the ServiceNow incident is closed. It will also optionally be able to stop the AMP host isolation and move the host back to its original group. The ServiceNow incident ID will be added to the SecureX incident to fully sync the 2 systems. This workflow will be called via an outbound API call from ServiceNow.
 
 **SecureX (AMP event) incident in ServiceNow:**<br/>
 ![](screenshots/servicenow_incident.png)
@@ -62,7 +62,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 ## Required workflows, targets, accounts keys, global variables
 
-* Main Workflow: [MSSP-Add-AMP+UMB-Creds.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Add-AMP+UMB-Creds.json) 
+* Main Workflow: [MSSP-Add-AMP+UMB-Creds.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-Add-AMP+UMB-Creds.json) 
 * Global variable: **MSSP_api_creds** (generated when workflow is imported)
 
 ## Installation steps:
@@ -79,7 +79,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 ![](screenshots/import-workflow.png)
 
-4. Click on **Browse** and copy paste the content of the [MSSP-Add-AMP+UMB-Creds.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Add-AMP+UMB-Creds.json) file inside of the text window. 
+4. Click on **Browse** and copy paste the content of the [MSSP-Add-AMP+UMB-Creds.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-Add-AMP%2BUMB-Creds.json) file inside of the text window. 
 
 ![](screenshots/copy-paste.png)
 
@@ -101,7 +101,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 ## Required workflows, targets, accounts keys, global variables
 
-* Main Workflow: [MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-SecureX-and-ServiceNow-Incident.json)
+* Main Workflow: [MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-SecureX-and-ServiceNow-Incident.json)
 * Atomic Workflow: Threat Response v2 - Generate Access Token
 * Atomic Workflow: Threat Response v2 - Inspect for Observables
 * Atomic Workflow: Threat Response v2 - Create Incident
@@ -118,7 +118,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 2. Click on **IMPORT** to import the workflow.
 
-3. Click on **Browse** and copy paste the content of the [MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-SecureX-and-ServiceNow-Incident.json) file inside of the text window. 
+3. Click on **Browse** and copy paste the content of the [MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-SecureX-and-ServiceNow-Incident.json) file inside of the text window. 
 
 
 4. Click on **IMPORT**. You might receive an error that information is missing.
@@ -137,8 +137,8 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 * Atomic Workflows: **AMP - Move Computer to Group**
 * Atomic Workflows: **AMP - Isolate Host**
-* Child Workflow: [MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-SecureX-and-ServiceNow-Incident.json)
-* Main Workflow: [MSSP-AMP-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-AMP-Trigger-5min.json)
+* Child Workflow: [MSSP-SecureX-and-ServiceNow-Incident.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-SecureX-and-ServiceNow-Incident.json)
+* Main Workflow: [MSSP-AMP-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-AMP-Trigger-5min.json)
 * Targets and Account Keys: **AMP_Target** (no account keys!)
 * Global variable: **MSSP_api_creds**
 
@@ -150,7 +150,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 2. Click on **IMPORT** to import the workflow.
 
-3. Click on **Browse** and copy paste the content of the [MSSP-AMP-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-AMP-Trigger-5min.json) file inside of the text window. 
+3. Click on **Browse** and copy paste the content of the [MSSP-AMP-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-AMP-Trigger-5min.json) file inside of the text window. 
 
 4. Click on **IMPORT**. You might receive an error that information is missing.
 
@@ -167,7 +167,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 * Atomic Workflow: **Umbrella - Reporting v2 - Get Activity** [imported here](https://ciscosecurity.github.io/sxo-05-security-workflows/importing)
 * Atomic Workflow: **Umbrella - Reporting v2 - Get Token - MSSP Adjusted** [import here](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/Umbrella%20-%20Reporting%20v2%20-%20Get%20Token%20-%20MSSP%20Adjusted.json)
-* Main Workflow: [MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Umbrella-Trigger-5min.json)
+* Main Workflow: [MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-Umbrella-Trigger-5min.json)
 * Target: **Umbrella Management** (no account keys!), **Umbrella Reporting v2** (no account keys!)
 * Global variable: **MSSP_api_creds**
 
@@ -177,7 +177,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 2. Click on **IMPORT** to import the workflow.
 
-3. Click on **Browse** and copy paste the content of the [MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/MSSP-Umbrella-Trigger-5min.json) file inside of the text window. 
+3. Click on **Browse** and copy paste the content of the [MSSP-Umbrella-Trigger-5min.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/MSSP-Umbrella-Trigger-5min.json) file inside of the text window. 
 
 4. Click on **IMPORT**. You might receive an error that information is missing.
 
@@ -192,7 +192,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 ## Required workflows, targets, accounts keys, global variables
 
 * Atomic Workflow: **Generate Access Token for SecureX**, **AMP - Move Computer to Group**
-* Main Workflow: [SERVICENOW-TO-AMP.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/SERVICENOW-TO-AMP.json)
+* Main Workflow: [SERVICENOW-TO-AMP.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/SERVICENOW-TO-AMP.json)
 * Target: **CTR API Target**, **AMP_Target**
 * Account keys: **CTR_Credentials**
 * Global variable: **MSSP_api_creds**, **SERVICENOW-RESPONSE-WF-ID**
@@ -203,7 +203,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
 
 2. Click on **IMPORT** to import the workflow.
 
-3. Click on **Browse** and copy paste the content of the [SERVICENOW-TO-AMP.json](https://raw.githubusercontent.com/chrivand/amp-mssp-events-to-snow/main/SERVICENOW-TO-AMP.json) file inside of the text window. 
+3. Click on **Browse** and copy paste the content of the [SERVICENOW-TO-AMP.json](https://raw.githubusercontent.com/chrivand/amp-umb-mssp-sxo/main/SERVICENOW-TO-AMP.json) file inside of the text window. 
 
 4. Click on **IMPORT**. You might receive an error that information is missing.
 
