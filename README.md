@@ -14,7 +14,7 @@ This is a set of sample workflows to work with the MSSP environment of **Cisco S
     1. [Import the first workflow to add encoded AMP API keys to table](#import-the-first-workflow-to-add-encoded-amp-api-keys-to-table)
     2. [Import the second workflow to create SecureX and ServiceNow incidents](#import-the-second-workflow-to-create-securex-and-servicenow-incidents)
     3. [Import the third workflow to retrieve AMP events](#import-the-third-workflow-to-retrieve-amp-events)
-    4. [Import the fourth workflow to retrieve Umbrella events](import-the-fourth-workflow-to-retrieve-umbrella-events#)
+    4. [Import the fourth workflow to retrieve Umbrella events](#import-the-fourth-workflow-to-retrieve-umbrella-events)
     5. [Import the fifth workflow that is triggered when ServiceNow incident is closed](#import-the-fifth-workflow-that-is-triggered-when-servicenow-incident-is-closed)
     6. [Import the sixth workflow that sets a global variable containing the ID of the third workflow](#import-the-sixth-workflow-that-sets-a-global-variable-containing-the-id-of-the-third-workflow)
     7. [Testing and running the solution](#testing-and-running-the-solution)
